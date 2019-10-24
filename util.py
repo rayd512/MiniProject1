@@ -55,7 +55,7 @@ def processLogin(cursor):
 			# There should only be one password, report error if not
 			if(len(parsed_pwd) > 1):
 				print("Internal Error")
-				return 0
+				return 0, None
 
 			if(parsed_pwd[0] != pwd):
 				# Checks if user wants to try again
@@ -77,11 +77,12 @@ def processLogin(cursor):
 		parsed_utype = [utypes[0] for utypes in utypes]
 		# return the appropriate value
 		if parsed_utype[0] == "a":
-			return 1
+			return 1, username
 		elif parsed_utype[0] == 'o':
-			return 2
+			return 2, username
 	else:
-		return 0;
+		# Return that a login was not succesful
+		return 0, None;
 
 def promptMessage():
 	response = input("Would you like to perform another task? (y/n)")
@@ -93,6 +94,7 @@ def promptMessage():
 		else:
 			print("Unknown Command")
 
+# Prints to the screen the commands available to an agent
 def dispAgentActions():
 	print("Type 'regBirth' to register a birth")
 	print("Type 'regMarriage' to register a marriage")
@@ -102,3 +104,5 @@ def dispAgentActions():
 	print("Type 'getAbstract' to get a driver abstract")
 	print("Type 'logout' to logout the program")
 	print("Type 'exit' to exit the program")
+
+# def regBirth():

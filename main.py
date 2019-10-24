@@ -17,13 +17,13 @@ def main():
 	cursor = connection.cursor()
 	# Calls processLogin function to check if the user
 	# successfully logs in
-	loginType = util.processLogin(cursor)
+	loginType, uid = util.processLogin(cursor)
 
 	# Perform the action corresponding to the login type
 	if loginType == 0:
 		return
 	elif loginType == 1:
-		agent.agentActions()
+		agent.agentActions(uid, cursor)
 		print("Agent")
 	elif loginType == 2:
 		officer.officerActions()

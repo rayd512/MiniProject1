@@ -1,6 +1,8 @@
 import util
-def agentActions():
-	print("Welcome Agent")
+def agentActions(uid, cursor):
+	cursor.execute('''SELECT fname FROM users where uid =?''', (uid,))
+	agentName = cursor.fetchone()
+	print("Welcome Agent " + agentName[0])
 	action = input("What would you like to do today? Type help for options\n").lower()
 	newAction = False
 	while True:

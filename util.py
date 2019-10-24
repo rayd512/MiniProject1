@@ -85,14 +85,43 @@ def processLogin(cursor):
 		return 0, None;
 
 def promptMessage(message):
-	response = input(message + " (y/n)\n").lower()
 	while True:
+		response = input(message + " (y/n)\n").lower()
 		if response == 'y':
 			return True
 		elif response == 'n':
 			return False
 		else:
 			print("Unknown Command")
+
+# Prompts the user to input a name based on the info string. The function
+# will then check if the name has any numbers in it, it will ask the agent
+# if he or her wants to try inputting that name again
+# Inputs: info - a string that holds what the program is going to ask the 
+#				 agent to input
+# Returns: tuple - first being the name inputted and the second whether or
+# 				   or not the agent was able to input a proper name
+def getName(info):
+	# Keep asking for info if the agent wants to try again
+	while True:
+		# Take in the response from the agent
+		response = input(info)
+		# Check if there is any digits in the inputted string 
+		if(any(char.isdigit() for char in response)):
+			# Check if the agent wants to try again
+			repeat = promptMessage("There seems to be a typo in that name," +
+				" would you like to try again?")
+			# Break if the agent doesn't want to try again
+			if(repeat == False):
+				return None, False
+		else:
+			# Succesful input, break
+			break
+	# Return the response and the success token
+	return response, True
+
+def checkDate():
+	pass
 
 # Prints to the screen the commands available to an agent
 def dispAgentActions():
@@ -106,13 +135,72 @@ def dispAgentActions():
 	print("Type 'exit' to exit the program")
 
 def regBirth():
+	# Prompt information on to the screen
 	print("Registering a birth...")
 	print("Please ensure you have the baby's first name, last name, " +
 		"birthplace, father's first name, father's last name, mother's" + 
 		" first name and mother's last name")
+	# Check if the Agent is ready to input 
 	ready = promptMessage("Do you have all this info ready?")
+
+	# Return to the main menu if the agent is not ready
 	if(ready == False):
 		print("Returning to main menu")
+
+	# Call get name to get the babies first name with basic error checking
+	fname, resume = getName("What is the baby's first name?\n")
+
+	# If the agent made a typo entering the name and doesn't want to 
+	# continue, the program will go back to the main menu
+	if(resume == False):
+		print("Returning to main menu")
+		return
+
+	# Get the last name of the baby
+	lname, resume = getName("What is the baby's last name?\n")
+	if(resume == False):
+		print("Returning to main menu")
+		return
+
+	# Get the gender of the baby, will check if something other than
+	# 'm' or 'f' is entered and will ask the user if it wants to try again
+	while True:
+		gender = input("What is the baby's gender? (M/F)\n").lower()
+		if(gender == "m" or gender == "f"):
+			resume = True
+			break
+		else:
+			resume = promptMessage("Unknown gender, try again?")
+			if resume == False:
+				break
+
+	if(resume == False):
+		print("Returning to main menu")
+		return
+
+	bday = input("What is the birthdate of the baby in the format"+ 
+				" 'year-month-day', i.e., 1999-05-12\n" )
+	
+	m_fname, resume = getName("What is the mother's first name? \n")
+	
+	if(resume == False):
+		print("Returning to main menu")
+		return
+	
+	m_lname, resume = getName("What is the mother's last name? \n")
+	
+	if(resume == False):
+		print("Returning to main menu")
+		return
+	
+	f_fname, resume = getName("What is the father's first name? \n")
+	if(resume == False):
+		print("Returning to main menu")
+		return
+	f_lname, resume = getName("What is the father's last name? \n")
+	if(resume == False):
+		print("Returning to main menu")
+		return
 	# birthInfo = input("Please input the birth info in a comma " +
 	# 	"seperated list in the following format: First name, Last Name" +
 	# 	"birthplace, Father's first name, Father's last name, Mother's" + 

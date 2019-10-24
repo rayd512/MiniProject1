@@ -24,7 +24,7 @@ def main():
 		return
 	elif loginType == 1:
 		agent.agentActions(uid, cursor)
-		print("Agent")
+		# print("Agent")
 	elif loginType == 2:
 		officer.officerActions()
 		print("Officer")

@@ -84,8 +84,8 @@ def processLogin(cursor):
 		# Return that a login was not succesful
 		return 0, None;
 
-def promptMessage():
-	response = input("Would you like to perform another task? (y/n)")
+def promptMessage(message):
+	response = input(message + " (y/n)\n").lower()
 	while True:
 		if response == 'y':
 			return True
@@ -105,4 +105,16 @@ def dispAgentActions():
 	print("Type 'logout' to logout the program")
 	print("Type 'exit' to exit the program")
 
-# def regBirth():
+def regBirth():
+	print("Registering a birth...")
+	print("Please ensure you have the baby's first name, last name, " +
+		"birthplace, father's first name, father's last name, mother's" + 
+		" first name and mother's last name")
+	ready = promptMessage("Do you have all this info ready?")
+	if(ready == False):
+		print("Returning to main menu")
+	# birthInfo = input("Please input the birth info in a comma " +
+	# 	"seperated list in the following format: First name, Last Name" +
+	# 	"birthplace, Father's first name, Father's last name, Mother's" + 
+	# 	" first name, Mother's last name\n" + "For example: Micheal, Fox, " +
+	# 	" Edmonton, AB")

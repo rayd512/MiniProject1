@@ -1,6 +1,8 @@
 import sqlite3
 import sys
 import util
+import officer
+import agent
 
 def main():
 	# Check that a command line argument for the database path was passed
@@ -20,10 +22,12 @@ def main():
 	if loginType == 0:
 		return
 	# Debugging output
-	# elif loginType == 1:
-	# 	print("Agent")
-	# elif loginType == 2:
-	# 	print("Officer")
+	elif loginType == 1:
+		agent.agentActions()
+		print("Agent")
+	elif loginType == 2:
+		officer.officerActions()
+		print("Officer")
 
 
 

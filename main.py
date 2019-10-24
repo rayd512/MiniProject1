@@ -1,5 +1,6 @@
 import sqlite3
 import sys
+import util
 
 def main():
 	# Check that a command line argument for the database path was passed
@@ -12,13 +13,18 @@ def main():
 	connection = sqlite3.connect(database_path)
 	# Create a cursor object for the database
 	cursor = connection.cursor()
+	# Calls processLogin function to check if the user
+	# successfully logs in
+	loginType = util.processLogin(cursor)
 
-	
-	cursor.execute("Select * from users")
-	user = cursor.fetchone()
-	print(user)
-	print(database_path)
-	
+	if loginType == 0:
+		return
+	# Debugging output
+	# elif loginType == 1:
+	# 	print("Agent")
+	# elif loginType == 2:
+	# 	print("Officer")
+
 
 
 if __name__ == '__main__':

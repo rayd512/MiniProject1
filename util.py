@@ -1,6 +1,9 @@
 from getpass import getpass
 
-
+# Processes the login of a user
+# Inputs: Cursor - a cursor object connected to the database
+# Returns: 0, 1 or 2 - 0 being login failed, 1 being login succeeded and user
+# is an agent and 2 being login succeeded and user is an officer
 def processLogin(cursor):
 	# Boolean holding whether the user wants to
 	# try to login again after failed attempts
@@ -52,7 +55,7 @@ def processLogin(cursor):
 			# There should only be one password, report error if not
 			if(len(parsed_pwd) > 1):
 				print("Internal Error")
-				return False
+				return 0
 
 			if(parsed_pwd[0] != pwd):
 				# Checks if user wants to try again
@@ -65,6 +68,17 @@ def processLogin(cursor):
 				loginSuccess = True
 				getCredentials = True
 
-	return loginSuccess
-	
-
+	# If the login was a success
+	if loginSuccess == True:
+		# Find if the user that logged in is an agent or officer
+		cursor.execute('''SELECT utype FROM users where uid = ?''', (username,))
+		utypes = cursor.fetchall()
+		# Parse the result
+		parsed_utype = [utypes[0] for utypes in utypes]
+		# return the appropriate value
+		if parsed_utype[0] == "a":
+			return 1
+		elif parsed_utype[0] == 'o':
+			return 2
+	else:
+		return 0;

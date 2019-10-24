@@ -45,7 +45,7 @@ def processLogin(cursor):
 			# Get the password from the user, getpass hides the password
 			pwd = getpass()
 
-			# Get all the stored passwords
+			# Get stored password corresponding to the username
 			cursor.execute('''SELECT pwd FROM users where uid = ?''', (username,))
 			passwords = cursor.fetchall()
 			
@@ -82,3 +82,23 @@ def processLogin(cursor):
 			return 2
 	else:
 		return 0;
+
+def promptMessage():
+	response = input("Would you like to perform another task? (y/n)")
+	while True:
+		if response == 'y':
+			return True
+		elif response == 'n':
+			return False
+		else:
+			print("Unknown Command")
+
+def dispAgentActions():
+	print("Type 'regBirth' to register a birth")
+	print("Type 'regMarriage' to register a marriage")
+	print("Type 'renewVreg' to renew a vehicle registration")
+	print("Type 'processBOS' to process a bill of sale")
+	print("Type 'procPayment' to process a payment")
+	print("Type 'getAbstract' to get a driver abstract")
+	print("Type 'logout' to logout the program")
+	print("Type 'exit' to exit the program")

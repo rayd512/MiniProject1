@@ -19,9 +19,9 @@ def main():
 	# successfully logs in
 	loginType = util.processLogin(cursor)
 
+	# Perform the action corresponding to the login type
 	if loginType == 0:
 		return
-	# Debugging output
 	elif loginType == 1:
 		agent.agentActions()
 		print("Agent")

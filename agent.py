@@ -1,24 +1,35 @@
 import util
 def agentActions():
 	print("Welcome Agent")
-	action = input("What would you like to do today? Type help for options").lower()
+	action = input("What would you like to do today? Type help for options\n").lower()
+	newAction = False
 	while True:
-		if action == "register a birth":
+		if action == "regbirth":
 			# Call function from util.py here
 			pass
-		elif action == "register a marriage":
+		elif action == "regmarriage":
 			pass
-		elif action == "renew a vehicle registration":
+		elif action == "renewvreg":
 			pass
-		elif action == "process a bill of sale":
+		elif action == "processbos":
 			pass
-		elif action == "process a payment":
+		elif action == "procpayment":
 			pass
-		elif action == "get a driver abstract":
+		elif action == "getAbstract":
 			pass
 		elif action == "help":
-			pass
+			util.dispAgentActions()
+			# break # Temporary
 		elif action == "exit":
 			break
+		elif action == "logout":
+			pass
 		else:
 			print("Unknown Command: Please try again")
+
+		# newAction = util.promptMessage()
+		# if newAction == True:
+		# 	action = input("Next Action?\n")
+		# else:
+		# 	break
+		action = input("Next action? \n")

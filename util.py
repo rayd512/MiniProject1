@@ -1,4 +1,5 @@
 from getpass import getpass
+import datetime
 
 # Processes the login of a user
 # Inputs: Cursor - a cursor object connected to the database
@@ -84,15 +85,21 @@ def processLogin(cursor):
 		# Return that a login was not succesful
 		return 0, None;
 
+# Asks the user a yes or no question from the message string, takes the input
+# from the user and returns a boolean corresponding to the response
+# Returns: A boolean either true or false (yes/no)
 def promptMessage(message):
 	while True:
+		# Get the response from the user and convert it to lowercase
 		response = input(message + " (y/n)\n").lower()
 		if response == 'y':
 			return True
 		elif response == 'n':
 			return False
 		else:
+			# if y or n is not typed print error and prompt user to try again
 			print("Unknown Command")
+
 
 # Prompts the user to input a name based on the info string. The function
 # will then check if the name has any numbers in it, it will ask the agent
@@ -120,8 +127,24 @@ def getName(info):
 	# Return the response and the success token
 	return response, True
 
-def checkDate():
-	pass
+# Gets the birthdate of the baby and validate it is in the correct format
+# Returns: The birthdate of the baby is successfully passed or 'None' if not
+def getDate():
+	while True:
+		# Get the date
+		date = input("What is the birthdate of the baby in the format"+ 
+				 " 'year-month-day', i.e., 1999-05-12\n")
+		# Try and except block to test for proper date format
+		try:
+			datetime.datetime.strptime(date, '%Y-%m-%d')
+			return date;
+		except ValueError:
+			# Check if the user wants to try again
+			resume = promptMessage("Incorrect date format, try again?")
+			if(resume == False):
+				# Returns none if not wanted to try again
+				return None
+
 
 # Prints to the screen the commands available to an agent
 def dispAgentActions():
@@ -174,35 +197,44 @@ def regBirth():
 			if resume == False:
 				break
 
+	# Return to menu if unsuccesful
 	if(resume == False):
 		print("Returning to main menu")
 		return
 
-	bday = input("What is the birthdate of the baby in the format"+ 
-				" 'year-month-day', i.e., 1999-05-12\n" )
-	
+	# Get a valid birthday
+	bday = getDate()
+	if(bday == None):
+		print("Returning to main menu")
+		return
+
+	# Get the mother's first name
 	m_fname, resume = getName("What is the mother's first name? \n")
 	
+	# Return to menu if unsuccesful
 	if(resume == False):
 		print("Returning to main menu")
 		return
 	
+	# Get the mother's last name
 	m_lname, resume = getName("What is the mother's last name? \n")
 	
+	# Return to menu if unsuccesful
 	if(resume == False):
 		print("Returning to main menu")
 		return
 	
+	# Get the father's first name
 	f_fname, resume = getName("What is the father's first name? \n")
+	# Return to menu if unsuccesful
 	if(resume == False):
 		print("Returning to main menu")
 		return
+
+	# Get the father's last name
 	f_lname, resume = getName("What is the father's last name? \n")
+	# Return to menu if unsuccesful
 	if(resume == False):
 		print("Returning to main menu")
 		return
-	# birthInfo = input("Please input the birth info in a comma " +
-	# 	"seperated list in the following format: First name, Last Name" +
-	# 	"birthplace, Father's first name, Father's last name, Mother's" + 
-	# 	" first name, Mother's last name\n" + "For example: Micheal, Fox, " +
-	# 	" Edmonton, AB")
+

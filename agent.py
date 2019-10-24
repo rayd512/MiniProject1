@@ -13,7 +13,7 @@ def agentActions(uid, cursor):
 	while True:
 		if action == "regbirth":
 			# Call function from util.py here
-			util.regBirth()
+			util.regBirth(cursor)
 		elif action == "regmarriage":
 			pass
 		elif action == "renewvreg":
@@ -39,5 +39,5 @@ def agentActions(uid, cursor):
 		# 	action = input("Next Action?\n")
 		# else:
 		# 	break
-		action = input("Next action? \n")
+		action = input("Next action? \n").lower()
 	print("Goodbye Agent " + agentName[0])

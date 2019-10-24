@@ -157,7 +157,33 @@ def dispAgentActions():
 	print("Type 'logout' to logout the program")
 	print("Type 'exit' to exit the program")
 
-def regBirth():
+def regPerson(fname, lname, bdate, bplace, address, phone, cursor):
+	cursor.execute('''INSERT INTO users(name, phone, email, password)
+					 VALUES(?,?,?,?)''', (fname, lname, bdate, bplace,
+					 	address, phone))
+	
+
+def handleNotReg(fname, lname, cursor):
+	moreInfo = promptMessage("It looks like " + fname + " "+ lname +" is not registered." +
+		"The system will automatically add them to the database, do" +
+		" you have any other information?")
+	if(moreInfo == True):
+		pass
+	else:
+		regPerson(fname, lname, None, None, None, None, cursor) 
+
+def checkPerson(fname, lname, cursor):
+	cursor.execute('''SELECT fname, lname FROM persons''')
+	matches = cursor.fetchall()
+	for people in matches:
+		if (people[0].lower() == fname.lower() and
+				people[1].lower() == lname.lower()):
+			return True
+	# print("No match")
+	return False
+	# print(matches)
+
+def regBirth(cursor):
 	# Prompt information on to the screen
 	print("Registering a birth...")
 	print("Please ensure you have the baby's first name, last name, " +
@@ -169,6 +195,7 @@ def regBirth():
 	# Return to the main menu if the agent is not ready
 	if(ready == False):
 		print("Returning to main menu")
+		return
 
 	# Call get name to get the babies first name with basic error checking
 	fname, resume = getName("What is the baby's first name?\n")
@@ -218,12 +245,16 @@ def regBirth():
 	
 	# Get the mother's last name
 	m_lname, resume = getName("What is the mother's last name? \n")
-	
+
 	# Return to menu if unsuccesful
 	if(resume == False):
 		print("Returning to main menu")
 		return
 	
+	isRegistered = checkPerson(m_lname, m_fname, cursor)
+	if isRegistered == False:
+		handleNotReg(m_fname, m_lname, cursor)
+
 	# Get the father's first name
 	f_fname, resume = getName("What is the father's first name? \n")
 	# Return to menu if unsuccesful

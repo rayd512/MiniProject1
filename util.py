@@ -1,6 +1,7 @@
 from getpass import getpass
 import datetime
 import re
+import random
 
 # Processes the login of a user
 # Inputs: Cursor - a cursor object connected to the database
@@ -234,7 +235,25 @@ def checkPerson(fname, lname, cursor):
 	return False
 	# print(matches)
 
-def regBirth(cursor):
+def genRegNo(database, cursor):
+	# String for the query, used to make the code more modular
+	query ="SELECT regno from " + database
+	# Execute the query
+	nums = cursor.execute(query)
+	success = True
+	# Keep generating a number until a unique one is created
+	while True:
+		# Generate a random number
+		newReg = random.randint(1, 2000)
+		# Check it against existing regNo's
+		for num in nums:
+			if num[0] == newReg:
+				success = False
+		# Return the regNo when a unique one is created
+		if success == True:
+			return newReg
+
+def regBirth(cursor, city):
 	# Variables holding whether or not the mother and father are
 	# already in the database
 	isRegMother = True
@@ -290,6 +309,7 @@ def regBirth(cursor):
 		print("Returning to main menu")
 		return
 
+	bplace = input("Where was the baby born?")
 	# Get the mother's first name
 	m_fname, resume = getName("What is the mother's first name? \n")
 	
@@ -349,8 +369,21 @@ def regBirth(cursor):
 	if(resume == False):
 		print("Returning to main menu, please try registering again")
 		return
-	
-	# cursor.execute('''INSERT INTO births(fname, lname, bdate, bplace, address, phone)
-	# 			 VALUES(?,?,?,?,?,?)''', (fname, lname, bdate, bplace,
-	# 			 	address, phone))
+
+	# Get today's date
+	regdate = datetime.datetime.date(datetime.datetime.now())
+	# Generate a unique regno
+	regno = genRegNo("births", cursor)
+	# Find the mothers address and phone number
+	cursor.execute('''SELECT address, phone FROM persons WHERE fname = ? and
+		lname = ?''', (m_fname, m_lname))
+	# Fetch the result
+	motherInfo = cursor.fetchone()
+	# Insert the baby into persons
+	cursor.execute('''INSERT into persons VALUES(?,?,?,?,?,?)''',
+		(fname, lname, bday, bplace, motherInfo[0], motherInfo[1]))
+	# Insert the baby into births
+	cursor.execute('''INSERT INTO births VALUES(?,?,?,?,?,?,?,?,?,?)''',
+		(regno, fname, lname, regdate, city, gender.upper(), f_fname, f_lname,
+				 	m_fname, m_lname))
 

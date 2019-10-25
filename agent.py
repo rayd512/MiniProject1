@@ -1,10 +1,10 @@
 import util
 def agentActions(uid, cursor):
 	# Find the agents name
-	cursor.execute('''SELECT fname FROM users where uid =?''', (uid,))
-	agentName = cursor.fetchone()
+	cursor.execute('''SELECT fname, city FROM users where uid =?''', (uid,))
+	agentInfo = cursor.fetchone()
 	# Personally welcome the agent
-	print("Welcome Agent " + agentName[0])
+	print("Welcome Agent " + agentInfo[0])
 	# Prompt the agaent what he'd like to do today
 	action = input("What would you like to do today? Type help for options\n").lower()
 	# Boolean that holds if more actions are to be made
@@ -13,7 +13,7 @@ def agentActions(uid, cursor):
 	while True:
 		if action == "regbirth":
 			# Call function from util.py here
-			util.regBirth(cursor)
+			util.regBirth(cursor, agentInfo[1])
 		elif action == "regmarriage":
 			pass
 		elif action == "renewvreg":
@@ -40,4 +40,4 @@ def agentActions(uid, cursor):
 		# else:
 		# 	break
 		action = input("Next action? \n").lower()
-	print("Goodbye Agent " + agentName[0])
+	print("Goodbye Agent " + agentInfo[0])

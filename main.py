@@ -29,6 +29,8 @@ def main():
 		officer.officerActions()
 		print("Officer")
 
+	# Commit any changes made to the database
+	connection.commit()
 
 
 if __name__ == '__main__':

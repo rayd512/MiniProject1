@@ -17,7 +17,7 @@ def agentActions(uid, cursor):
 		elif action == "regmarriage":
 			util.regMarriage(cursor, agentInfo[1])
 		elif action == "renewvreg":
-			pass
+			util.renewVReg(cursor)
 		elif action == "processbos":
 			pass
 		elif action == "procpayment":

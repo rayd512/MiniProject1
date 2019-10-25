@@ -2,6 +2,7 @@ from getpass import getpass
 import datetime
 import re
 import random
+from dateutil.relativedelta import relativedelta
 
 # Processes the login of a user
 # Inputs: Cursor - a cursor object connected to the database
@@ -116,7 +117,8 @@ def getName(info):
 		# Take in the response from the agent
 		response = input(info)
 		# Check if there is any digits in the inputted string 
-		if(any(char.isdigit() for char in response)):
+		if(any(char.isdigit() for char in response) or
+			response.isspace() or response == ""):
 			# Check if the agent wants to try again
 			repeat = promptMessage("There seems to be a typo in that name," +
 				" would you like to try again?")
@@ -457,6 +459,7 @@ def regMarriage(cursor, city):
 	# Abort process if information is not correct
 	if resume == False:
 		print("Returning to main menu")
+		return
 
 	# Generate a unique registration number
 	regNo = genRegNo("marriages", cursor)
@@ -466,3 +469,47 @@ def regMarriage(cursor, city):
 
 	cursor.execute('''INSERT INTO marriages VALUES (?,?,?,?,?,?,?)''',
 		(regNo, regdate, city, p1_fname, p1_lname, p2_fname, p2_lname))
+
+def renewVReg(cursor):
+	# Print info and check if agent has all the required information
+	print("Renewing a vehicle registration...")
+	print("You will need the registration no.")
+	resume = promptMessage("Do you have this info?")
+	# Abort if agent doesn't have the required info
+	if resume == False:
+		print("Returning to main menu")
+		return
+
+	# Get the registration number and check that it is only made up of numbers
+	while True:
+		regNo = input("What is the vehicle registration number?\n")
+		if regNo.isdigit() == False:
+			resume = promptMessage("Vehicle registration number can only" + 
+				" digits. Would you like to try again?")
+			if resume == False:
+				print("Returning to main menu")
+				return
+		else:
+			break
+
+	# Find the expiry date of the registration
+	cursor.execute('''SELECT expiry FROM registrations WHERE regno = ?''', (regNo,))
+	# Fetch the query result
+	regExpr = cursor.fetchone()
+	# Convert expiry to a datetime object
+	currentExpr = datetime.datetime.strptime(regExpr[0], '%Y-%m-%d')
+	# Get today's date as date time
+	dateToday = datetime.datetime.now()
+	# Check if the expiry has already expired
+	if currentExpr <= dateToday:
+		# Add one year to today's date
+		newExpr = dateToday + relativedelta(years=+1)
+	else:
+		# Add one year to the currentexpiry date
+		newExpr = currentExpr + relativedelta(years=+1)
+
+	# Update the expiry in the database 
+	cursor.execute('''UPDATE registrations SET expiry = ? WHERE regno = ?''',
+		(newExpr, regNo))
+
+

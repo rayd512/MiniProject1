@@ -164,7 +164,9 @@ def regPerson(fname, lname, bdate, bplace, address, phone, cursor):
 	cursor.execute('''INSERT INTO persons(fname, lname, bdate, bplace, address, phone)
 					 VALUES(?,?,?,?,?,?)''', (fname, lname, bdate, bplace,
 					 	address, phone))
+
 # Gets the phone number from the agent and verifies it's correctness
+# Returns: The phone number or None if the phone number could not be verified
 def getPhone():
 	# Keeps looping until a correct phone number is entered or the agent gives up
 	while True:
@@ -184,6 +186,10 @@ def getPhone():
 			# Return the correct phone number
 			return phone
 
+# Handles registering a mother or father who is not in the database
+# Inputs: fname - the first name of the person to be added
+#		  lname - the last name of the person to be added
+#         cursor - a cursor object to the database
 def handleNotReg(fname, lname, cursor):
 	# Display message to the user explaining what's going on
 	moreInfo = promptMessage("It looks like " + fname + " "+ lname +" is not registered." +
@@ -223,21 +229,32 @@ def handleNotReg(fname, lname, cursor):
 		# Call regPerson to add the person to the database
 		regPerson(fname, lname, None, None, None, None, cursor) 
 
+# Helper function that checks if the person is already in the database or not
+# Inputs: fname - the first name of the person to be added
+#		  lname - the last name of the person to be added
+#         cursor - a cursor object to the database
+# Returns: True or False whether or not the person is in the database
 def checkPerson(fname, lname, cursor):
+	# Query for the all the first and last names in persons
 	cursor.execute('''SELECT fname, lname FROM persons''')
+	# Fetch all the results
 	matches = cursor.fetchall()
+	# Loop through all the results
 	for people in matches:
-		# print(people[0] + " " + people[1])
+		# Check for a match
 		if (people[0].lower() == fname.lower() and
 				people[1].lower() == lname.lower()):
 			return True
-	# print("No match")
+	# Return false if there was no match
 	return False
-	# print(matches)
 
-def genRegNo(database, cursor):
+# Generate a unique registration number corresponding to the passed database
+# Inputs: table - the table where the unique regNo will go
+#         cursor - a cursor object to the database
+# Returns: newReg - a unique registration number
+def genRegNo(table, cursor):
 	# String for the query, used to make the code more modular
-	query ="SELECT regno from " + database
+	query ="SELECT regno from " + table
 	# Execute the query
 	nums = cursor.execute(query)
 	success = True

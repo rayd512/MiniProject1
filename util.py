@@ -1,5 +1,6 @@
 from getpass import getpass
 import datetime
+import re
 
 # Processes the login of a user
 # Inputs: Cursor - a cursor object connected to the database
@@ -132,7 +133,7 @@ def getName(info):
 def getDate():
 	while True:
 		# Get the date
-		date = input("What is the birthdate of the baby in the format"+ 
+		date = input("What is the birthdate in the format"+ 
 				 " 'year-month-day', i.e., 1999-05-12\n")
 		# Try and except block to test for proper date format
 		try:
@@ -158,17 +159,46 @@ def dispAgentActions():
 	print("Type 'exit' to exit the program")
 
 def regPerson(fname, lname, bdate, bplace, address, phone, cursor):
-	cursor.execute('''INSERT INTO users(name, phone, email, password)
-					 VALUES(?,?,?,?)''', (fname, lname, bdate, bplace,
+	cursor.execute('''INSERT INTO persons(fname, lname, bdate, bplace, address, phone)
+					 VALUES(?,?,?,?,?,?)''', (fname, lname, bdate, bplace,
 					 	address, phone))
-	
+
+def getPhone():
+	while True:
+		pattern = re.compile("(\+[\d]+\s)?\(?[\d]{3}\)?[\-.\s]{1}[\d]{3}[\-.\s]{1}[\d]{4}")
+		phone = input("What is the phone number?\n")
+		if(pattern.fullmatch(phone) is None):
+			resume = promptMessage("It seems like there is a typo in your phone number. Try again?")
+			if resume == False:
+				return None
+		else:
+			return phone
 
 def handleNotReg(fname, lname, cursor):
 	moreInfo = promptMessage("It looks like " + fname + " "+ lname +" is not registered." +
 		"The system will automatically add them to the database, do" +
 		" you have any other information?")
+	bdate = None
+	bplace = None
+	address = None
+	phone = None
 	if(moreInfo == True):
-		pass
+		while True:
+			# bdate = input("What's the birthday? Press enter if you don't know this")
+			resume = promptMessage("Do you have the birthday?")
+			if resume:
+				bdate = getDate()
+			resume = promptMessage("Do you have the birth place?")
+			if resume:
+				bplace = input("What is the birthplace?\n")
+			resume = promptMessage("What is the address?")
+			if resume:
+				address = input("What is the address?\n")
+			resume = promptMessage("Do you have the phonen number?")
+			if resume:
+				phone = getPhone()
+			regPerson(fname, lname, bdate, bplace, address, phone, cursor)
+
 	else:
 		regPerson(fname, lname, None, None, None, None, cursor) 
 

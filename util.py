@@ -326,7 +326,7 @@ def regBirth(cursor, city):
 		print("Returning to main menu")
 		return
 
-	bplace = input("Where was the baby born?")
+	bplace = input("Where was the baby born?\n")
 	# Get the mother's first name
 	m_fname, resume = getName("What is the mother's first name? \n")
 	
@@ -404,3 +404,65 @@ def regBirth(cursor, city):
 		(regno, fname, lname, regdate, city, gender.upper(), f_fname, f_lname,
 				 	m_fname, m_lname))
 
+def regMarriage(cursor, city):
+	# Display info and confirm agent has all the required info for the
+	# registration
+	print("Registering a marriage...")
+	print("You will need both partners full names.")
+	resume = promptMessage("Do you have all this information ready?")
+
+	# Get partner one's full name
+	p1_fname, resume = getName("What is partner one's first name?\n")
+	# Check if agent aborted
+	if(resume == False):
+		print("Returning to main menu")
+		return
+
+	# Check if agent aborted
+	p1_lname, resume = getName("What is partner one's last name?\n")
+	if(resume == False):
+		print("Returning to main menu")
+		return
+
+	# Check if partner one is in the database, register them if not
+	isRegistered = checkPerson(p1_fname, p1_lname, cursor)
+	if isRegistered == False:
+		handleNotReg(p1_fname, p1_lname, cursor)
+
+	# Get partner two's full name
+	p2_fname, resume = getName("What is partner two's first name?\n")
+
+	# Check if agent aborted
+	if(resume == False):
+		print("Returning to main menu")
+		return
+
+	p2_lname, resume = getName("What is partner two's last name?\n")
+
+	# Check if agent aborted
+	if(resume == False):
+		print("Returning to main menu")
+		return
+
+	# Check if partner one is in the database, register them if not
+	isRegistered = checkPerson(p2_fname, p2_lname, cursor)
+	if isRegistered == False:
+		handleNotReg(p2_fname, p2_lname, cursor)
+
+	# Confirm the information
+	print("Please confirm the following information")
+	print("Partner 1 Full name: " + p1_fname + " " + p1_lname)
+	print("Partner 2 Full name: " + p2_fname + " " + p2_lname)
+	resume = promptMessage("Is all this information correct?")
+	# Abort process if information is not correct
+	if resume == False:
+		print("Returning to main menu")
+
+	# Generate a unique registration number
+	regNo = genRegNo("marriages", cursor)
+
+	# Get today's date
+	regdate = datetime.datetime.date(datetime.datetime.now())
+
+	cursor.execute('''INSERT INTO marriages VALUES (?,?,?,?,?,?,?)''',
+		(regNo, regdate, city, p1_fname, p1_lname, p2_fname, p2_lname))

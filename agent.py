@@ -15,7 +15,7 @@ def agentActions(uid, cursor):
 			# Call function from util.py here
 			util.regBirth(cursor, agentInfo[1])
 		elif action == "regmarriage":
-			pass
+			util.regMarriage(cursor, agentInfo[1])
 		elif action == "renewvreg":
 			pass
 		elif action == "processbos":

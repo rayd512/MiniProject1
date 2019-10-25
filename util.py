@@ -158,54 +158,75 @@ def dispAgentActions():
 	print("Type 'logout' to logout the program")
 	print("Type 'exit' to exit the program")
 
+# Adds a person to the database
 def regPerson(fname, lname, bdate, bplace, address, phone, cursor):
 	cursor.execute('''INSERT INTO persons(fname, lname, bdate, bplace, address, phone)
 					 VALUES(?,?,?,?,?,?)''', (fname, lname, bdate, bplace,
 					 	address, phone))
-
+# Gets the phone number from the agent and verifies it's correctness
 def getPhone():
+	# Keeps looping until a correct phone number is entered or the agent gives up
 	while True:
+		# Compile a regex pattern to check for the correctness of an inputted phone number
 		pattern = re.compile("(\+[\d]+\s)?\(?[\d]{3}\)?[\-.\s]{1}[\d]{3}[\-.\s]{1}[\d]{4}")
+		# Asks the user for the phone number
 		phone = input("What is the phone number?\n")
+		# Check for a fullmatch of the pattern to the phone number
 		if(pattern.fullmatch(phone) is None):
+			# Outputs error if the pattern doesn't match
 			resume = promptMessage("It seems like there is a typo in your phone number. Try again?")
+			# Checks if the agent wants to try inputting the number again
 			if resume == False:
+				# Return a null string
 				return None
 		else:
+			# Return the correct phone number
 			return phone
 
 def handleNotReg(fname, lname, cursor):
+	# Display message to the user explaining what's going on
 	moreInfo = promptMessage("It looks like " + fname + " "+ lname +" is not registered." +
 		"The system will automatically add them to the database, do" +
 		" you have any other information?")
+	# Initialize variables to None
 	bdate = None
 	bplace = None
 	address = None
 	phone = None
+
+	# Check if the agent has more info
 	if(moreInfo == True):
-		while True:
-			# bdate = input("What's the birthday? Press enter if you don't know this")
-			resume = promptMessage("Do you have the birthday?")
-			if resume:
-				bdate = getDate()
-			resume = promptMessage("Do you have the birth place?")
-			if resume:
-				bplace = input("What is the birthplace?\n")
-			resume = promptMessage("What is the address?")
-			if resume:
-				address = input("What is the address?\n")
-			resume = promptMessage("Do you have the phonen number?")
-			if resume:
+		# while True:
+
+		# Check if the agent has various info pertaining to the person
+		# Skips the attribute if they don't have the info
+		resume = promptMessage("Do you have the birthday?")
+		if resume:
+			bdate = getDate()
+		resume = promptMessage("Do you have the birth place?")
+		if resume:
+			bplace = input("What is the birthplace?\n")
+		resume = promptMessage("Do you have the address?")
+		if resume:
+			address = input("What is the address?\n")
+		resume = promptMessage("Do you have the phone number?")
+		if resume:
 				phone = getPhone()
-			regPerson(fname, lname, bdate, bplace, address, phone, cursor)
+			# TODO Verify this info
+			# print("Please verify the following information")
+			# print("Full name: " + fname + " " + lname)
+		# Call regPerson to add the person to the database
+		regPerson(fname, lname, bdate, bplace, address, phone, cursor)
 
 	else:
+		# Call regPerson to add the person to the database
 		regPerson(fname, lname, None, None, None, None, cursor) 
 
 def checkPerson(fname, lname, cursor):
 	cursor.execute('''SELECT fname, lname FROM persons''')
 	matches = cursor.fetchall()
 	for people in matches:
+		# print(people[0] + " " + people[1])
 		if (people[0].lower() == fname.lower() and
 				people[1].lower() == lname.lower()):
 			return True
@@ -214,6 +235,10 @@ def checkPerson(fname, lname, cursor):
 	# print(matches)
 
 def regBirth(cursor):
+	# Variables holding whether or not the mother and father are
+	# already in the database
+	isRegMother = True
+	isRegFather = True
 	# Prompt information on to the screen
 	print("Registering a birth...")
 	print("Please ensure you have the baby's first name, last name, " +
@@ -281,8 +306,9 @@ def regBirth(cursor):
 		print("Returning to main menu")
 		return
 	
-	isRegistered = checkPerson(m_lname, m_fname, cursor)
+	isRegistered = checkPerson(m_fname, m_lname, cursor)
 	if isRegistered == False:
+		isRegMother = False
 		handleNotReg(m_fname, m_lname, cursor)
 
 	# Get the father's first name
@@ -298,4 +324,33 @@ def regBirth(cursor):
 	if(resume == False):
 		print("Returning to main menu")
 		return
+
+	# Check for registration of the father in the database, add him
+	# if he is not in the database
+	isRegistered = checkPerson(f_fname, f_lname, cursor)
+	if isRegistered == False:
+		isRegFather = False
+		handleNotReg(f_fname, f_lname, cursor)
+
+	# Verify information
+	print("Please verify if the following information is correct")
+	print("Baby's full name: " + fname + " " + lname)
+	print("Baby's gender: " + gender.upper())
+	# Checks mother name only if it was previously registered
+	if isRegMother:
+		print("Mother's name: " + m_fname + " " + m_lname)
+	# Checks father name only if it was previously registered
+	if isRegFather:
+		print("Father's name: " + f_fname + " " + f_lname)
+	# Checks with user if all the info was correct
+	resume = promptMessage("Is all of this information correct?")
+
+	# Goes back to the main menu if the info is incorrect
+	if(resume == False):
+		print("Returning to main menu, please try registering again")
+		return
+	
+	# cursor.execute('''INSERT INTO births(fname, lname, bdate, bplace, address, phone)
+	# 			 VALUES(?,?,?,?,?,?)''', (fname, lname, bdate, bplace,
+	# 			 	address, phone))
 

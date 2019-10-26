@@ -574,6 +574,19 @@ def processBOS(cursor):
 		print("Returning to main menu")
 		return
 
+	# Confirm the entered information with the agent
+	print("Please confirm the following information")
+	print("Seller's name: " + seller_fname + " " + seller_lname)
+	print("Buyer's name: " + buyer_fname + " " + buyer_lname)
+	print("VIN: " + vin)
+	print("New plate number: " + plate_num)
+	resume = promptMessage("Is all this information correct?")
+	# Abort if there is incorrect information
+	if resume == False:
+		print("Returning to main menu")
+		return
+
+
 	# Get today's date as date time
 	dateToday = datetime.date.today()
 	# Add one year from today's date

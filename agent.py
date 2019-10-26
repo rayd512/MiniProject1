@@ -19,7 +19,7 @@ def agentActions(uid, cursor):
 		elif action == "renewvreg":
 			util.renewVReg(cursor)
 		elif action == "processbos":
-			pass
+			util.processBOS(cursor)
 		elif action == "procpayment":
 			pass
 		elif action == "getAbstract":

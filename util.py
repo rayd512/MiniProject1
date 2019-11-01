@@ -58,19 +58,19 @@ def getName(info):
 		# Take in the response from the agent
 		response = input(info)
 		# Check if there is any digits in the inputted string 
-		if(any(char.isdigit() for char in response) or
+		if ( any(char.isdigit() for char in response) or
 			response.isspace() or response == ""):
+
 			# Check if the agent wants to try again
 			repeat = promptMessage("There seems to be a typo in that name," +
 				" would you like to try again?")
-			# Break if the agent doesn't want to try again
+
 			if(repeat == False):
-				return None, False
+				return None
 		else:
-			# Succesful input, break
 			break
 	# Return the response and the success token
-	return response, True
+	return response
 
 # Gets the birthdate of the baby and validate it is in the correct format
 # Returns: The birthdate of the baby is successfully passed or 'None' if not
@@ -82,7 +82,7 @@ def getDate():
 		# Try and except block to test for proper date format
 		try:
 			datetime.datetime.strptime(date, '%Y-%m-%d')
-			return date;
+			return date
 		except ValueError:
 			# Check if the user wants to try again
 			resume = promptMessage("Incorrect date format, try again?")
@@ -213,206 +213,6 @@ def genRegNo(table, cursor):
 		if success == True:
 			return newReg
 
-def regBirth(cursor, city):
-	# Variables holding whether or not the mother and father are
-	# already in the database
-	isRegMother = True
-	isRegFather = True
-	# Prompt information on to the screen
-	print("Registering a birth...")
-	print("Please ensure you have the baby's first name, last name, " +
-		"birthplace, father's first name, father's last name, mother's" + 
-		" first name and mother's last name")
-	# Check if the Agent is ready to input 
-	ready = promptMessage("Do you have all this info ready?")
-
-	# Return to the main menu if the agent is not ready
-	if(ready == False):
-		print("Returning to main menu")
-		return
-
-	# Call get name to get the babies first name with basic error checking
-	fname, resume = getName("What is the baby's first name?\n")
-
-	# If the agent made a typo entering the name and doesn't want to 
-	# continue, the program will go back to the main menu
-	if(resume == False):
-		print("Returning to main menu")
-		return
-
-	# Get the last name of the baby
-	lname, resume = getName("What is the baby's last name?\n")
-	if(resume == False):
-		print("Returning to main menu")
-		return
-
-	# Get the gender of the baby, will check if something other than
-	# 'm' or 'f' is entered and will ask the user if it wants to try again
-	while True:
-		gender = input("What is the baby's gender? (M/F)\n").lower()
-		if(gender == "m" or gender == "f"):
-			resume = True
-			break
-		else:
-			resume = promptMessage("Unknown gender, try again?")
-			if resume == False:
-				break
-
-	# Return to menu if unsuccesful
-	if(resume == False):
-		print("Returning to main menu")
-		return
-
-	# Get a valid birthday
-	bday = getDate()
-	if(bday == None):
-		print("Returning to main menu")
-		return
-
-	bplace = input("Where was the baby born?\n")
-	# Get the mother's first name
-	m_fname, resume = getName("What is the mother's first name? \n")
-	
-	# Return to menu if unsuccesful
-	if(resume == False):
-		print("Returning to main menu")
-		return
-	
-	# Get the mother's last name
-	m_lname, resume = getName("What is the mother's last name? \n")
-
-	# Return to menu if unsuccesful
-	if(resume == False):
-		print("Returning to main menu")
-		return
-	
-	isRegistered = checkPerson(m_fname, m_lname, cursor)
-	if isRegistered == False:
-		isRegMother = False
-		handleNotReg(m_fname, m_lname, cursor)
-
-	# Get the father's first name
-	f_fname, resume = getName("What is the father's first name? \n")
-	# Return to menu if unsuccesful
-	if(resume == False):
-		print("Returning to main menu")
-		return
-
-	# Get the father's last name
-	f_lname, resume = getName("What is the father's last name? \n")
-	# Return to menu if unsuccesful
-	if(resume == False):
-		print("Returning to main menu")
-		return
-
-	# Check for registration of the father in the database, add him
-	# if he is not in the database
-	isRegistered = checkPerson(f_fname, f_lname, cursor)
-	if isRegistered == False:
-		isRegFather = False
-		handleNotReg(f_fname, f_lname, cursor)
-
-	# Verify information
-	print("Please verify if the following information is correct")
-	print("Baby's full name: " + fname + " " + lname)
-	print("Baby's gender: " + gender.upper())
-	# Checks mother name only if it was previously registered
-	if isRegMother:
-		print("Mother's name: " + m_fname + " " + m_lname)
-	# Checks father name only if it was previously registered
-	if isRegFather:
-		print("Father's name: " + f_fname + " " + f_lname)
-	# Checks with user if all the info was correct
-	resume = promptMessage("Is all of this information correct?")
-
-	# Goes back to the main menu if the info is incorrect
-	if(resume == False):
-		print("Returning to main menu, please try registering again")
-		return
-
-	# Get today's date
-	regdate = datetime.datetime.date(datetime.datetime.now())
-	# Generate a unique regno
-	regno = genRegNo("births", cursor)
-	# Find the mothers address and phone number
-	cursor.execute('''SELECT address, phone FROM persons WHERE fname = ? and
-		lname = ?''', (m_fname, m_lname))
-	# Fetch the result
-	motherInfo = cursor.fetchone()
-	# Insert the baby into persons
-	cursor.execute('''INSERT into persons VALUES(?,?,?,?,?,?)''',
-		(fname, lname, bday, bplace, motherInfo[0], motherInfo[1]))
-	# Insert the baby into births
-	cursor.execute('''INSERT INTO births VALUES(?,?,?,?,?,?,?,?,?,?)''',
-		(regno, fname, lname, regdate, city, gender.upper(), f_fname, f_lname,
-				 	m_fname, m_lname))
-
-# Registers a marriage into the database
-# Inputs: cursor - an instance of the cursor object connected to the database
-#		  city   - the city where the agent is in
-def regMarriage(cursor, city):
-	# Display info and confirm agent has all the required info for the
-	# registration
-	print("Registering a marriage...")
-	print("You will need both partners full names.")
-	resume = promptMessage("Do you have all this information ready?")
-
-	# Get partner one's full name
-	p1_fname, resume = getName("What is partner one's first name?\n")
-	# Check if agent aborted
-	if(resume == False):
-		print("Returning to main menu")
-		return
-
-	# Check if agent aborted
-	p1_lname, resume = getName("What is partner one's last name?\n")
-	if(resume == False):
-		print("Returning to main menu")
-		return
-
-	# Check if partner one is in the database, register them if not
-	isRegistered = checkPerson(p1_fname, p1_lname, cursor)
-	if isRegistered == False:
-		handleNotReg(p1_fname, p1_lname, cursor)
-
-	# Get partner two's full name
-	p2_fname, resume = getName("What is partner two's first name?\n")
-
-	# Check if agent aborted
-	if(resume == False):
-		print("Returning to main menu")
-		return
-
-	p2_lname, resume = getName("What is partner two's last name?\n")
-
-	# Check if agent aborted
-	if(resume == False):
-		print("Returning to main menu")
-		return
-
-	# Check if partner one is in the database, register them if not
-	isRegistered = checkPerson(p2_fname, p2_lname, cursor)
-	if isRegistered == False:
-		handleNotReg(p2_fname, p2_lname, cursor)
-
-	# Confirm the information
-	print("Please confirm the following information")
-	print("Partner 1 Full name: " + p1_fname + " " + p1_lname)
-	print("Partner 2 Full name: " + p2_fname + " " + p2_lname)
-	resume = promptMessage("Is all this information correct?")
-	# Abort process if information is not correct
-	if resume == False:
-		print("Returning to main menu")
-		return
-
-	# Generate a unique registration number
-	regNo = genRegNo("marriages", cursor)
-
-	# Get today's date
-	regdate = datetime.datetime.date(datetime.datetime.now())
-
-	cursor.execute('''INSERT INTO marriages VALUES (?,?,?,?,?,?,?)''',
-		(regNo, regdate, city, p1_fname, p1_lname, p2_fname, p2_lname))
 
 # Renews a vehicle registration
 # Inputs: cursor - an instance of the cursor object connected to the database
@@ -477,13 +277,13 @@ def processBOS(cursor):
 
 	# Get the buyer a seller's name, abort if agent could not properly
 	# fill out any of the names
-	seller_fname, resume = getName("What is the seller's first name?\n")
-	if(resume == False):
+	seller_fname = getName("What is the seller's first name?\n")
+	if not seller_fname:
 		print("Returning to main menu")
 		return
 
-	seller_lname, resume = getName("What is the seller's last name?\n")
-	if(resume == False):
+	seller_lname = getName("What is the seller's last name?\n")
+	if not seller_lname:
 		print("Returning to main menu")
 		return
 
@@ -493,7 +293,7 @@ def processBOS(cursor):
 		return
 
 	buyer_lname, resume = getName("What is the buyer's last name?\n")
-	if(resume == False):
+	if not buyer_lname:
 		print("Returning to main menu")
 		return
 

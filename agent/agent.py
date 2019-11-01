@@ -1,10 +1,10 @@
 import util
+import sys
 from user import User
-import agent.helpers as helpers
+from agent.methods.regBirth import regBirth
 
 class Agent(User):
 	def __init__(self, uid, cursor):
-		print(uid)
 		super().__init__(uid, cursor)
 		print("Welcome Agent")
 	
@@ -19,22 +19,22 @@ class Agent(User):
 		print("Type 'exit' to exit the program")
 
 	def processJobs(self):
-		action = input("What would you like to do. Type help to display options\n")
+		action = input("What would you like to do. Type help to display options\n> ").lower()
 		if action == 'help':
 			self.dispAgentActions()
 		elif action == 'exit':
 			super().exit()
 		elif action == 'logout':
 			super().logout()
-		elif action == 'regBirth':
-			helpers.regBirth(self.cursor, super().getCity())
-		elif action == 'regMarriage':
+		elif action == 'regbirth':
+			regBirth(self.cursor, super().getCity())
+		elif action == 'regmarriage':
 			pass
-		elif action == 'renewVreg':
+		elif action == 'renewvreg':
 			pass
-		elif action == 'processBOS':
+		elif action == 'processbos':
 			pass
-		elif action == 'procPayment':
+		elif action == 'procpayment':
 			pass
-		elif action == 'getAbstract':
+		elif action == 'getabstract':
 			pass		

@@ -40,23 +40,13 @@ def main():
 				break
 
 			if user.isExit():
+				connection.commit()
 				return
 			
 			user.processJobs()
-			
-		# loginType, uid = util.processLogin(cursor)
-
-		# if (loginType == 1):
-		# 	person = Agent()
-		# else:
-		# 	person = Officer()
-
-		# while True:
-		# 	if not person.loggedIn:
-		# 		break
 
 		# Commit any changes made to the database
-		# connection.commit()
+		connection.commit()
 
 
 if __name__ == '__main__':

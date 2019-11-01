@@ -5,6 +5,7 @@ class User:
     def __init__(self, uid, cursor):
         self.uid = uid
         self.city = None
+        self.name = None
         self.cursor = cursor
         self.loggedIn = True
         self.toExit = False
@@ -27,6 +28,11 @@ class User:
             self.city = self.cursor.fetchone()[0]
         return self.city
 
+    def getName(self):
+        if not self.name:
+            self.cursor.execute("SELECT fname FROM users WHERE uid = ?", (self.uid, ))
+            self.name = self.cursor.fetchone()[0]
+        return self.name
 
     # Asks the user a yes or no question from the message string, takes the input
     # from the user and returns a boolean corresponding to the response

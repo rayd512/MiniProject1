@@ -1,4 +1,5 @@
 import sqlite3
+from getpass import getpass
 
 class User:
     def __init__(self, uid, cursor):
@@ -42,7 +43,26 @@ class User:
                 # if y or n is not typed print error and prompt user to try again
                 print("Unknown Command")
 
+    # Processes the login of a user
+    # Inputs: Cursor - a cursor object connected to the database
+    # Returns: 0, 1 or 2 - 0 being login failed, 1 being login succeeded and user
+    # is an agent and 2 being login succeeded and user is an officer
+    @staticmethod
+    def processLogin(cursor):
+        username = input("Username: ")
 
-    # def query(self, statement, args):
-    #     if not self.city:
-    #         self.cursor.execute(statement, args)
+        credentials = (username, )
+        cursor.execute("SELECT uid, pwd, utype FROM users WHERE uid LIKE ?", credentials)
+        user = cursor.fetchone()
+
+        if not user:
+            print("User does not exist")
+            return None
+        
+        password = getpass("Password: ")
+        
+        if password == user[1]:
+            return user
+        else:
+            print("Wrong password")
+            return None

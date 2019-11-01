@@ -1,7 +1,8 @@
-import util
-import sys
 from user import User
 from agent.methods.regBirth import regBirth
+from agent.methods.regMarriage import regMarriage
+from agent.methods.renewVreg import renewVReg
+from agent.methods.processBOS import processBOS
 
 class Agent(User):
 	def __init__(self, uid, cursor):
@@ -29,11 +30,11 @@ class Agent(User):
 		elif action == 'regbirth':
 			regBirth(self.cursor, super().getCity())
 		elif action == 'regmarriage':
-			pass
+			regMarriage(self.cursor, super().getCity())
 		elif action == 'renewvreg':
-			pass
+			renewVReg(self.cursor)
 		elif action == 'processbos':
-			pass
+			processBOS(self.cursor)
 		elif action == 'procpayment':
 			pass
 		elif action == 'getabstract':

@@ -1,7 +1,7 @@
 import sqlite3
 import os
 import sys
-import util
+from user import User
 from officer.officer import Officer
 from agent.agent import Agent
 
@@ -23,7 +23,7 @@ def main():
 	cursor = connection.cursor()
 
 	while True:
-		userCreds = util.processLogin(cursor)
+		userCreds = User.processLogin(cursor)
 
 		if not userCreds:
 			continue

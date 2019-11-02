@@ -3,11 +3,12 @@ from agent.methods.regBirth import regBirth
 from agent.methods.regMarriage import regMarriage
 from agent.methods.renewVreg import renewVReg
 from agent.methods.processBOS import processBOS
+from agent.methods.procPayment import procPayment
 
 class Agent(User):
 	def __init__(self, uid, cursor):
 		super().__init__(uid, cursor)
-		print("Welcome Agent")
+		print("Welcome Agent " + self.getName())
 	
 	def dispAgentActions(self):
 		print("Type 'regBirth' to register a birth")
@@ -36,6 +37,8 @@ class Agent(User):
 		elif action == 'processbos':
 			processBOS(self.cursor)
 		elif action == 'procpayment':
-			pass
+			procPayment(self.cursor)
 		elif action == 'getabstract':
-			pass		
+			pass
+		else:
+			print("Unknown Command")	

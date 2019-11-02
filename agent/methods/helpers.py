@@ -170,3 +170,14 @@ def getDate():
 			if(resume == False):
 				# Returns none if not wanted to try again
 				return None
+
+def getPaymentAmount():
+	while True:
+		pass
+		amount = input("What is the paymount amount? i.e '9', with no $ sign")
+
+		if not amount.isdigit():
+			resume = promptMessage("Invalid input, would you like to try again?")
+
+			if not resume:
+				return None

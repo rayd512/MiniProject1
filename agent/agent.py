@@ -8,7 +8,7 @@ from agent.methods.procPayment import procPayment
 class Agent(User):
 	def __init__(self, uid, cursor):
 		super().__init__(uid, cursor)
-		print("Welcome Agent " + self.getName())
+		print("Welcome Agent " + super().getName())
 	
 	def dispAgentActions(self):
 		print("Type 'regBirth' to register a birth")

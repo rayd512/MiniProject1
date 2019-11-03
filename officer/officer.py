@@ -1,5 +1,6 @@
 from user import User
 from officer.methods.issueTicket import issueTicket
+from officer.methods.findCarOwner import findCarOwner
 
 class Officer(User):
 	def __init__(self, uid, cursor):
@@ -23,6 +24,6 @@ class Officer(User):
 		elif action == 'issueticket':
 			issueTicket(self.cursor)
 		elif action == 'findcarowner':
-			pass
+			findCarOwner(self.cursor)
 		else:
 			print("Unknown Command")	

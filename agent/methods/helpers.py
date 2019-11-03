@@ -78,21 +78,26 @@ def handleNotReg(fname, lname, cursor):
 # Returns: newReg - a unique registration number
 def genRegNo(table, cursor):
 	# String for the query, used to make the code more modular
-	query ="SELECT regno from " + table
-	# Execute the query
-	nums = cursor.execute(query)
-	success = True
-	# Keep generating a number until a unique one is created
-	while True:
-		# Generate a random number
-		newReg = random.randint(1, 2000)
-		# Check it against existing regNo's
-		for num in nums:
-			if num[0] == newReg:
-				success = False
-		# Return the regNo when a unique one is created
-		if success == True:
-			return newReg
+	query = "SELECT count(*) from " + table
+	cursor.execute(query)
+	return cursor.fetchone()[0]
+	
+	# # String for the query, used to make the code more modular
+	# query ="SELECT regno from " + table
+	# # Execute the query
+	# nums = cursor.execute(query)
+	# success = True
+	# # Keep generating a number until a unique one is created
+	# while True:
+	# 	# Generate a random number
+	# 	newReg = random.randint(1, 2000)
+	# 	# Check it against existing regNo's
+	# 	for num in nums:
+	# 		if num[0] == newReg:
+	# 			success = False
+	# 	# Return the regNo when a unique one is created
+	# 	if success == True:
+	# 		return newReg
 
 # Helper function that checks if the person is already in the database or not
 # Inputs: fname - the first name of the person to be added

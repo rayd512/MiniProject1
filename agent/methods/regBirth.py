@@ -32,6 +32,13 @@ def regBirth(cursor, city):
 		print("Returning to main menu")
 		return
 
+	cursor.execute("SELECT count(*) FROM persons where fname LIKE ? AND LNAME LIKE ?",
+					(fname, lname))
+	
+	if (cursor.fetchone()[0] > 0):
+		print("- Baby's name already exists, please choose another name")
+		return
+
 	# Get the gender of the baby, will check if something other than
 	# 'm' or 'f' is entered and will ask the user if it wants to try again
 	while True:

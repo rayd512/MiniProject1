@@ -16,9 +16,12 @@ def issueTicket(cursor):
             print("Returning to main menu")
             return
 
-    statement = ("SELECT registrations.fname, registrations.lname, vehicles.make, vehicles.model, " 
-                "vehicles.year, vehicles.color from registrations, vehicles " 
-                "WHERE registrations.regno = ? AND registrations.vin = vehicles.vin")
+    statement = (
+        "SELECT registrations.fname, registrations.lname, vehicles.make, vehicles.model, " 
+        "vehicles.year, vehicles.color " 
+        "FROM registrations, vehicles " 
+        "WHERE registrations.regno = ? AND registrations.vin = vehicles.vin"
+    )
 
     cursor.execute(statement, (regNo, ))
     result = cursor.fetchone()
@@ -37,7 +40,7 @@ def issueTicket(cursor):
         return
     
     while True:
-        print("What is the violation date?")
+        print("- What is the violation date?")
         print("To use today's date, press enter.")
         print("Otherwise, enter the date in the format 'year-month-day', i.e., 1999-05-12")
         violDate = input("> ")
@@ -62,15 +65,11 @@ def issueTicket(cursor):
             return
         fine = input("- Enter fine amount") 
     
-    cursor.execute("SELECT tno from tickets ORDER BY tno DESC LIMIT 1")
-    tno = cursor.fetchone()
-    if not tno:
-        tno = -1
-    else:
-        tno = tno[0]
+    cursor.execute("SELECT count(*) FROM tickets")
+    tno = cursor.fetchone()[0]
 
     statement = "INSERT INTO tickets(tno, regno, fine, violation, vdate) VALUES(?, ?, ?, ?, ?)"
-    args = (tno+1, regNo, fine, violDescr, violDate)
+    args = (tno, regNo, fine, violDescr, violDate)    
     cursor.execute(statement, args)
         
         

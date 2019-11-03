@@ -35,7 +35,7 @@ def getPhone():
 #         cursor - a cursor object to the database
 def handleNotReg(fname, lname, cursor):
 	# Display message to the user explaining what's going on
-	moreInfo = promptMessage("It looks like " + fname + " "+ lname +" is not registered." +
+	moreInfo = promptMessage("- It looks like " + fname + " "+ lname +" is not registered." +
 		"The system will automatically add them to the database, do" +
 		" you have any other information?")
 	# Initialize variables to None
@@ -45,32 +45,20 @@ def handleNotReg(fname, lname, cursor):
 	phone = None
 
 	# Check if the agent has more info
-	if(moreInfo == True):
-		# while True:
-
+	if moreInfo:
 		# Check if the agent has various info pertaining to the person
 		# Skips the attribute if they don't have the info
-		resume = promptMessage("Do you have the birthday?")
-		if resume:
+		if promptMessage("Do you have the birthday?"):
 			bdate = getDate()
-		resume = promptMessage("Do you have the birth place?")
-		if resume:
-			bplace = input("What is the birthplace?\n")
-		resume = promptMessage("Do you have the address?")
-		if resume:
-			address = input("What is the address?\n")
-		resume = promptMessage("Do you have the phone number?")
-		if resume:
-				phone = getPhone()
-			# TODO Verify this info
-			# print("Please verify the following information")
-			# print("Full name: " + fname + " " + lname)
-		# Call regPerson to add the person to the database
-		regPerson(fname, lname, bdate, bplace, address, phone, cursor)
-
-	else:
-		# Call regPerson to add the person to the database
-		regPerson(fname, lname, None, None, None, None, cursor) 
+		if promptMessage("Do you have the birth place?"):
+			bplace = input("- What is the birthplace?\n> ")
+		if promptMessage("Do you have the address?"):
+			address = input("- What is the address?\n> ")
+		if promptMessage("Do you have the phone number?"):
+			phone = getPhone()
+			
+	# Call regPerson to add the person to the database
+	regPerson(fname, lname, bdate, bplace, address, phone, cursor)
 
 # Generate a unique registration number corresponding to the passed database
 # Inputs: table - the table where the unique regNo will go
@@ -82,23 +70,6 @@ def genRegNo(table, cursor):
 	cursor.execute(query)
 	return cursor.fetchone()[0]
 	
-	# # String for the query, used to make the code more modular
-	# query ="SELECT regno from " + table
-	# # Execute the query
-	# nums = cursor.execute(query)
-	# success = True
-	# # Keep generating a number until a unique one is created
-	# while True:
-	# 	# Generate a random number
-	# 	newReg = random.randint(1, 2000)
-	# 	# Check it against existing regNo's
-	# 	for num in nums:
-	# 		if num[0] == newReg:
-	# 			success = False
-	# 	# Return the regNo when a unique one is created
-	# 	if success == True:
-	# 		return newReg
-
 # Helper function that checks if the person is already in the database or not
 # Inputs: fname - the first name of the person to be added
 #		  lname - the last name of the person to be added
@@ -110,8 +81,7 @@ def checkPerson(fname, lname, cursor):
 	cursor.execute("SELECT count(*) FROM persons where fname LIKE ? and lname LIKE ?", credentials)
 	
 	# Fetch all the results
-	matches = cursor.fetchall()
-
+	matches = cursor.fetchone()
 	if matches[0] == 0:
 		return False
 	return True
@@ -122,7 +92,7 @@ def checkPerson(fname, lname, cursor):
 def promptMessage(message):
 	while True:
 		# Get the response from the user and convert it to lowercase
-		response = input(message + " (y/n)\n").lower()
+		response = input(message + " (y/n)\n> ").lower()
 		if response == 'y':
 			return True
 		elif response == 'n':
@@ -142,7 +112,7 @@ def getName(info):
 	# Keep asking for info if the agent wants to try again
 	while True:
 		# Take in the response from the agent
-		response = input(info)
+		response = input(info + "> ")
 		# Check if there is any digits in the inputted string 
 		if ( any(char.isdigit() for char in response) or
 			response.isspace() or response == ""):
@@ -152,7 +122,6 @@ def getName(info):
 				" would you like to try again?")
 			if(repeat == False):
 				return None
-			
 		else:
 			break
 	# Return the response and the success token
@@ -163,8 +132,8 @@ def getName(info):
 def getDate():
 	while True:
 		# Get the date
-		date = input("What is the birthdate in the format"+ 
-				 " 'year-month-day', i.e., 1999-05-12\n")
+		date = input("- What is the birthdate in the format"+ 
+				 " 'year-month-day', i.e., 1999-05-12\n> ")
 		# Try and except block to test for proper date format
 		try:
 			datetime.datetime.strptime(date, '%Y-%m-%d')

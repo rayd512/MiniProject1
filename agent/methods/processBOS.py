@@ -12,41 +12,46 @@ def processBOS(cursor):
         " registration")
 
     # Abort if agent doesn't have the required info
-    if not promptMessage("Do you have all this information?"):
+    if not promptMessage("- Do you have all this information?"):
         print("Returning to main menu")
         return
 
     # Get the vin of the car being sold
-    vin = input("What is the VIN of the vehicle\n")
+    vin = input("- What is the VIN of the vehicle\n> ")
 
     # Get the buyer a seller's name, abort if agent could not properly
     # fill out any of the names
-    seller_fname = getName("What is the seller's first name?\n")
+    seller_fname = getName("- What is the seller's first name?\n")
     if not seller_fname:
         print("Returning to main menu")
         return
 
-    seller_lname = getName("What is the seller's last name?\n")
+    seller_lname = getName("- What is the seller's last name?\n")
     if not seller_lname:
         print("Returning to main menu")
         return
 
-    buyer_fname = getName("What is the buyer's first name?\n")
+    buyer_fname = getName("- What is the buyer's first name?\n")
     if not buyer_fname:
         print("Returning to main menu")
         return
 
-    buyer_lname = getName("What is the buyer's last name?\n")
+    buyer_lname = getName("- What is the buyer's last name?\n")
     if not buyer_lname:
         print("Returning to main menu")
         return
 
     # Get the new plate number
-    plate_num = input("What is the new plate number?\n")
+    plate_num = input("- What is the new plate number?\n> ")
 
     # Get the first name and last name attached to the car
-    cursor.execute('''SELECT fname, lname, expiry FROM registrations WHERE vin = ?''',
-        (vin,))
+    statement = (
+        "SELECT fname, lname "
+        "FROM registrations "
+        "WHERE vin = ? "
+        "ORDER BY regdate DESC LIMIT 1"
+    )
+    cursor.execute(statement, (vin,))
 
     # Fetch the info
     ownerInfo = cursor.fetchone()
@@ -81,7 +86,14 @@ def processBOS(cursor):
     regNo = genRegNo("registrations", cursor)
     
     # Update the current record with all the new info
-    cursor.execute('''UPDATE registrations SET regno = ?, 
-        regdate = ?, expiry = ?, plate = ?, fname = ?, lname = ? WHERE
-        vin = ?''', (regNo, dateToday, newExpr, plate_num, buyer_fname,
-            buyer_lname, vin))
+    statement = (
+        "INSERT INTO registrations "
+        "VALUES(?,?,?,?,?,?,?)"
+    )
+    cursor.execute(statement, (regNo, dateToday, newExpr, plate_num, vin, buyer_fname,
+            buyer_lname))
+
+    # cursor.execute('''UPDATE registrations SET regno = ?, 
+    #     regdate = ?, expiry = ?, plate = ?, fname = ?, lname = ? WHERE
+    #     vin = ?''', (regNo, dateToday, newExpr, plate_num, buyer_fname,
+    #         buyer_lname, vin))

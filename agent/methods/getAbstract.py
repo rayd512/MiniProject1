@@ -86,8 +86,18 @@ def getAbstract(cursor):
 
 	if recordLength <= 5:
 		print("Showing " + str(recordLength) + " of " + str(recordLength) + " tickets: ")
-		for row in tickRecord:
-			print(row)
+		# for row in tickRecord:
+		# 	print(row)
+		for y in range(0, recordLength):
+			print()
+			print("Ticket #: " + str(tickRecord[y][0]))
+			print("Violation Date: " + str(tickRecord[y][1]))
+			print("Violation: " + str(tickRecord[y][2]))
+			print("$ Amount: " + str(tickRecord[y][3]))
+			print("Registration #: " + str(tickRecord[y][4]))
+			print("Make: " + str(tickRecord[y][5]))
+			print("Model: " + str(tickRecord[y][6]))
+			print()
 		return
 
 	start = 0

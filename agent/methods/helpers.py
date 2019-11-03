@@ -101,17 +101,15 @@ def genRegNo(table, cursor):
 # Returns: True or False whether or not the person is in the database
 def checkPerson(fname, lname, cursor):
 	# Query for the all the first and last names in persons
-	cursor.execute('''SELECT fname, lname FROM persons''')
+	credentials = (fname, lname)
+	cursor.execute("SELECT count(*) FROM persons where fname LIKE ? and lname LIKE ?", credentials)
+	
 	# Fetch all the results
 	matches = cursor.fetchall()
-	# Loop through all the results
-	for people in matches:
-		# Check for a match
-		if (people[0].lower() == fname.lower() and
-				people[1].lower() == lname.lower()):
-			return True
-	# Return false if there was no match
-	return False
+
+	if matches[0] == 0:
+		return False
+	return True
 
 # Asks the user a yes or no question from the message string, takes the input
 # from the user and returns a boolean corresponding to the response

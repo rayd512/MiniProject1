@@ -13,7 +13,6 @@ def main():
 
 	# Assign the path to a variable
 	database_path = sys.argv[1]
-	
 	if (os.path.isfile(database_path)):
 		connection = sqlite3.connect(database_path)
 	else:
@@ -21,7 +20,6 @@ def main():
 		sys.exit(0)
 	
 	cursor = connection.cursor()
-
 	while True:
 		userCreds = User.processLogin(cursor)
 
@@ -34,7 +32,6 @@ def main():
 		else:
 			user = Officer(userCreds[0], cursor)
 		
-
 		while True:
 			if not user.isLoggedIn():
 				break
@@ -44,9 +41,8 @@ def main():
 				return
 			
 			user.processJobs()
-
-		# Commit any changes made to the database
-		connection.commit()
+			# Commit any changes made to the database
+			connection.commit()
 
 
 if __name__ == '__main__':

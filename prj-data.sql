@@ -31,13 +31,13 @@ insert into demeritNotices values("2018-09-02", "Daniel", "Florendo", 4, "DanNot
 insert into demeritNotices values("2018-09-04", "Daniel", "Florendo", 5, "DanNotice 4");
 insert into demeritNotices values("2018-09-03", "Daniel", "Florendo", 4, "DanNotice 3");
 
-insert into tickets values(201, 2, 300, "Speeding", "2018-02-04");
-insert into tickets values(202, 2, 450, "Reckless Driving", "2019-01-03");
+insert into tickets values(201, 2, 300, "Speeding", "2010-02-04");
+insert into tickets values(202, 2, 450, "Reckless Driving", "2010-01-03");
 
 insert into demeritNotices values("1995-03-08", "Raynard", "Dizon", 1, "RayNotice 1");
-insert into demeritNotices values("2018-09-02", "Raynard", "Dizon", 10, "RayNotice 2");
-insert into demeritNotices values("2018-09-04", "Raynard", "Dizon", 5, "RayNotice 4");
-insert into demeritNotices values("2018-09-03", "Raynard", "Dizon", 4, "RayNotice 3");
+insert into demeritNotices values("2010-09-02", "Raynard", "Dizon", 10, "RayNotice 2");
+insert into demeritNotices values("2010-09-04", "Raynard", "Dizon", 5, "RayNotice 4");
+insert into demeritNotices values("2010-09-03", "Raynard", "Dizon", 4, "RayNotice 3");
 
 insert into tickets values(300, 3, 200, "DUI", "1999-05-03");
 insert into tickets values(301, 3, 300, "Speeding", "2018-02-04");

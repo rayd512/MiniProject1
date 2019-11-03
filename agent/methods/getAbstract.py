@@ -51,6 +51,11 @@ def getAbstract(cursor):
 	# lifetime record
 	lifetime = cursor.fetchone()
 
+	if (lifetime == None):
+		print(fName + " " + lName + " has no registration records. Returning to main menu.")
+		print()
+		return
+		
 	print()
 	print("Viewing " + fName + " " + lName + "'s abstract summary (last 2 years/ lifetime): ")
 	print("Name: " + str(recent[0]) + " " + str(recent[1]))
@@ -91,7 +96,6 @@ def getAbstract(cursor):
 	while (remaining > 0):
 		print("Showing " + str(end+1) + " of " + str(recordLength) + " tickets: ")
 		for y in range(start, end+1):
-			# print(tickRecord[y])
 			print()
 			print("Ticket #: " + str(tickRecord[y][0]))
 			print("Violation Date: " + str(tickRecord[y][1]))

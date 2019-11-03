@@ -1,5 +1,5 @@
 from agent.methods.helpers import *
-import datetime
+from datetime import datetime
 
 # Registers a marriage into the database
 # Inputs: cursor - an instance of the cursor object connected to the database
@@ -10,19 +10,19 @@ def regMarriage(cursor, city):
     print("Registering a marriage...")
     print("You will need both partners full names.")
 
-    if not promptMessage("Do you have all this information ready?"):
+    if not promptMessage("- Do you have all this information ready?"):
         print("Returning to main menu")
         return
 
     # Get partner one's full name
-    p1_fname = getName("What is partner one's first name?\n")
+    p1_fname = getName("- What is partner one's first name?\n")
     # Check if agent aborted
     if not p1_fname:
         print("Returning to main menu")
         return
 
     # Check if agent aborted
-    p1_lname = getName("What is partner one's last name?\n")
+    p1_lname = getName("- What is partner one's last name?\n")
     if not p1_lname:
         print("Returning to main menu")
         return
@@ -32,14 +32,14 @@ def regMarriage(cursor, city):
         handleNotReg(p1_fname, p1_lname, cursor)
 
     # Get partner two's full name
-    p2_fname = getName("What is partner two's first name?\n")
+    p2_fname = getName("- What is partner two's first name?\n")
 
     # Check if agent aborted
     if not p2_fname:
         print("Returning to main menu")
         return
 
-    p2_lname = getName("What is partner two's last name?\n")
+    p2_lname = getName("- What is partner two's last name?\n")
 
     # Check if agent aborted
     if not p2_lname:
@@ -56,7 +56,7 @@ def regMarriage(cursor, city):
     print("Partner 2 Full name: " + p2_fname + " " + p2_lname)
 
     # Abort process if information is not correct
-    if not promptMessage("Is all this information correct?"):
+    if not promptMessage("- Is all this information correct?"):
         print("Returning to main menu")
         return
 
@@ -64,7 +64,7 @@ def regMarriage(cursor, city):
     regNo = genRegNo("marriages", cursor)
 
     # Get today's date
-    regdate = datetime.datetime.date(datetime.datetime.now())
+    regdate = datetime.date(datetime.now())
 
     cursor.execute('''INSERT INTO marriages VALUES (?,?,?,?,?,?,?)''',
         (regNo, regdate, city, p1_fname, p1_lname, p2_fname, p2_lname))

@@ -30,6 +30,11 @@ def renewVReg(cursor):
     cursor.execute('''SELECT expiry FROM registrations WHERE regno = ?''', (regNo,))
     # Fetch the query result
     regExpr = cursor.fetchone()
+
+    if regExpr is None:
+        print("Could not find registration number")
+        print("Returning to main menu")
+        return
     # Convert expiry to a datetime object
     currentExpr = datetime.strptime(regExpr[0], '%Y-%m-%d')
     # Get today's date as date time

@@ -102,11 +102,10 @@ def processBOS(cursor):
     # Add one year from today's date
     newExpr = dateToday + relativedelta(years=+1)
     
-    print(newExpr)
     # Generate a registration number
     regNo = genRegNo("registrations", cursor)
     
-    # Update the current record with all the new info
+    # Make a new record for the registration
     statement = (
         "INSERT INTO registrations "
         "VALUES(?,?,?,?,?,?,?)"
@@ -114,5 +113,6 @@ def processBOS(cursor):
     cursor.execute(statement, (regNo, dateToday, newExpr, plate_num, vin, buyer_fname,
             buyer_lname))
 
+    # Update the seller's registration
     cursor.execute('''UPDATE registrations SET expiry = ? WHERE
-        vin = ?''', (dateToday, vin))
+        vin = ? AND fname = ? AND lname = ?''', (dateToday, vin, seller_fname, seller_lname))

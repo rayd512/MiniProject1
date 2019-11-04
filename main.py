@@ -34,10 +34,10 @@ def main():
 		# uid is first element in the userCreds list
 		if userCreds[2] == 'a':
 			# Instantiate an agent object
-			user = Agent(userCreds[0], cursor)
+			user = Agent(userCreds[0], cursor, connection)
 		else:
 			# Instantiate an agent object
-			user = Officer(userCreds[0], cursor)
+			user = Officer(userCreds[0], cursor, connection)
 		
 		# Loop through actions of agent or officer
 		while True:

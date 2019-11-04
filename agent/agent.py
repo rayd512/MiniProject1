@@ -8,8 +8,8 @@ from agent.methods.getAbstract import getAbstract
 
 class Agent(User):
 	# Constructor
-	def __init__(self, uid, cursor):
-		super().__init__(uid, cursor)
+	def __init__(self, uid, cursor, connection):
+		super().__init__(uid, cursor, connection)
 		print("Welcome Agent " + self.getName())
 	
 	# Display the actions available to the agent
@@ -46,3 +46,4 @@ class Agent(User):
 			getAbstract(self.cursor)
 		else:
 			print("Unknown Command")
+		self.connection.commit()

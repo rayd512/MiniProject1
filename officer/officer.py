@@ -3,8 +3,8 @@ from officer.methods.issueTicket import issueTicket
 from officer.methods.findCarOwner import findCarOwner
 
 class Officer(User):
-	def __init__(self, uid, cursor):
-		super().__init__(uid, cursor)
+	def __init__(self, uid, cursor, connection):
+		super().__init__(uid, cursor, connection)
 		print("Welcome Officer " + super().getName())
 
 	def dispOfficerActions(self):

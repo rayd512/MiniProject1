@@ -2,13 +2,14 @@ import sqlite3
 from getpass import getpass
 
 class User:
-    def __init__(self, uid, cursor):
+    def __init__(self, uid, cursor, connection):
         self.uid = uid
         self.city = None
         self.name = None
         self.cursor = cursor
         self.loggedIn = True
         self.toExit = False
+        self.connection = connection
     
     def logout(self):
         self.loggedIn = False

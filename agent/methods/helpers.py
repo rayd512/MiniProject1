@@ -126,8 +126,10 @@ def getName(info):
 	while True:
 		# Take in the response from the agent
 		response = input(info + "> ")
+		# Compile a regex pattern to check for the correctness of an inputted phone number
+		pattern = re.compile("[A-Z0-9a-z\-]{1,16}")
 		# Check if there is any digits in the inputted string 
-		if ( any(char.isdigit() for char in response) or
+		if ( pattern.fullmatch(response) is None or
 			response.isspace() or response == ""):
 
 			# Check if the agent wants to try again

@@ -27,3 +27,4 @@ class Officer(User):
 			findCarOwner(self.cursor)
 		else:
 			print("Unknown Command")	
+		self.connection.commit()		

@@ -6,3 +6,8 @@ refresh:
 compile:
 	sqlite3 prj.db < prj-tables.sql
 	sqlite3 prj.db < prj-data.sql
+
+alt:
+	rm prj.db
+	sqlite3 prj.db < prj-tables.sql
+	sqlite3 prj.db < prj-dataAlt.sql

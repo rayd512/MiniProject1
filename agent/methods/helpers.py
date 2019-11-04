@@ -146,12 +146,16 @@ def getDate():
 				return None
 
 def getPaymentAmount():
+	# Loop infinitely
 	while True:
-		pass
+		# Ask user for an amount
 		amount = input("What is the paymount amount? i.e '9', with no $ sign")
 
+		# Check if the amount was a digit
 		if not amount.isdigit():
+			# Ask agent if they want to try again if the input wasn't a number
 			resume = promptMessage("Invalid input, would you like to try again?")
 
+			# Return None if agent doesn't want to try again
 			if not resume:
 				return None

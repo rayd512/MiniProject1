@@ -17,7 +17,23 @@ def processBOS(cursor):
         return
 
     # Get the vin of the car being sold
-    vin = input("- What is the VIN of the vehicle\n> ")
+    while True:
+        vin = input("- What is the VIN of the vehicle\n> ")
+        # Check if nothing was entered
+        if vin == "" or vin.isspace():
+            resume = promptMessage("You entered nothing, try again? ")
+            # Check if user wants to try again
+            if not resume:
+                print("Returning to main menu")
+                return
+        elif len(vin) > 5:
+            resume = promptMessage("That VIN is too long, try again? ")
+            # Check if user wants to try again
+            if not resume:
+                print("Returning to main menu")
+                return
+        else:
+            break
 
     # Get the buyer a seller's name, abort if agent could not properly
     # fill out any of the names
@@ -28,6 +44,30 @@ def processBOS(cursor):
 
     seller_lname = getName("- What is the seller's last name?\n")
     if not seller_lname:
+        print("Returning to main menu")
+        return
+
+    # Get the first name and last name attached to the car
+    statement = (
+        "SELECT fname, lname "
+        "FROM registrations "
+        "WHERE vin = ? "
+        "ORDER BY regdate DESC LIMIT 1"
+    )
+    cursor.execute(statement, (vin,))
+
+    # Fetch the info
+    ownerInfo = cursor.fetchone()
+
+    if not ownerInfo:
+        print("Could not find VIN or seller's name")
+        print("Returning to main menu")
+        return
+    # Check if the seller IS the owner of the vehicle, output message if not
+    if (ownerInfo[0].lower() != seller_fname.lower()
+            or ownerInfo[1].lower() != seller_lname.lower()):
+        print("The owner of this car is not the same as the seller. " +
+            "This transfer cannot be made.")
         print("Returning to main menu")
         return
 
@@ -43,26 +83,6 @@ def processBOS(cursor):
 
     # Get the new plate number
     plate_num = input("- What is the new plate number?\n> ")
-
-    # Get the first name and last name attached to the car
-    statement = (
-        "SELECT fname, lname "
-        "FROM registrations "
-        "WHERE vin = ? "
-        "ORDER BY regdate DESC LIMIT 1"
-    )
-    cursor.execute(statement, (vin,))
-
-    # Fetch the info
-    ownerInfo = cursor.fetchone()
-
-    # Check if the seller IS the owner of the vehicle, output message if not
-    if (ownerInfo[0].lower() != seller_fname.lower()
-            or ownerInfo[1].lower() != seller_lname.lower()):
-        print("The owner of this car is not the same as the seller. " +
-            "This transfer cannot be made.")
-        print("Returning to main menu")
-        return
 
     # Confirm the entered information with the agent
     print("Please confirm the following information")
@@ -82,6 +102,7 @@ def processBOS(cursor):
     # Add one year from today's date
     newExpr = dateToday + relativedelta(years=+1)
     
+    print(newExpr)
     # Generate a registration number
     regNo = genRegNo("registrations", cursor)
     
@@ -93,7 +114,5 @@ def processBOS(cursor):
     cursor.execute(statement, (regNo, dateToday, newExpr, plate_num, vin, buyer_fname,
             buyer_lname))
 
-    # cursor.execute('''UPDATE registrations SET regno = ?, 
-    #     regdate = ?, expiry = ?, plate = ?, fname = ?, lname = ? WHERE
-    #     vin = ?''', (regNo, dateToday, newExpr, plate_num, buyer_fname,
-    #         buyer_lname, vin))
+    cursor.execute('''UPDATE registrations SET expiry = ? WHERE
+        vin = ?''', (dateToday, vin))

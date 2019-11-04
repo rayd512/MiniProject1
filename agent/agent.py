@@ -3,13 +3,16 @@ from agent.methods.regBirth import regBirth
 from agent.methods.regMarriage import regMarriage
 from agent.methods.renewVreg import renewVReg
 from agent.methods.processBOS import processBOS
+from agent.methods.procPayment import procPayment
 from agent.methods.getAbstract import getAbstract
 
 class Agent(User):
+	# Constructor
 	def __init__(self, uid, cursor):
 		super().__init__(uid, cursor)
-		print("Welcome Agent")
+		print("Welcome Agent " + self.getName())
 	
+	# Display the actions available to the agent
 	def dispAgentActions(self):
 		print("Type 'regBirth' to register a birth")
 		print("Type 'regMarriage' to register a marriage")
@@ -20,6 +23,7 @@ class Agent(User):
 		print("Type 'logout' to logout the program")
 		print("Type 'exit' to exit the program")
 
+	# Process what the user wants to do and the call the appropriate function
 	def processJobs(self):
 		action = input("What would you like to do. Type help to display options\n> ").lower()
 		if action == 'help':
@@ -37,7 +41,8 @@ class Agent(User):
 		elif action == 'processbos':
 			processBOS(self.cursor)
 		elif action == 'procpayment':
-			pass
+			procpayment(self.cursor)
 		elif action == 'getabstract':
 			getAbstract(self.cursor)
-			pass		
+		else:
+			print("Unknown Command")

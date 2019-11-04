@@ -41,7 +41,7 @@ class Agent(User):
 		elif action == 'processbos':
 			processBOS(self.cursor)
 		elif action == 'procpayment':
-			procpayment(self.cursor)
+			procPayment(self.cursor)
 		elif action == 'getabstract':
 			getAbstract(self.cursor)
 		else:

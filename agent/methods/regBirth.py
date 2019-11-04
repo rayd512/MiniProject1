@@ -32,7 +32,8 @@ def regBirth(cursor, city):
 		print("Returning to main menu")
 		return
 
-	cursor.execute("SELECT count(*) FROM persons where fname LIKE ? AND LNAME LIKE ?",
+	# Check if the baby's name is already in the table
+	cursor.execute("SELECT count(*) FROM persons where fname LIKE ? AND lname LIKE ?",
 					(fname, lname))
 	
 	if (cursor.fetchone()[0] > 0):

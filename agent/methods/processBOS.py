@@ -81,6 +81,12 @@ def processBOS(cursor):
         print("Returning to main menu")
         return
 
+    # Check if the buyer is in the database
+    if not checkPerson(buyer_fname, buyer_lname, cursor):
+        print(buyer_fname + " " + buyer_lname + " is not in the database")
+        print("This transaction cannot be completed")
+        print("Returning to main menu")
+        return
     # Get the new plate number
     plate_num = input("- What is the new plate number?\n> ")
 

@@ -1,6 +1,7 @@
 import datetime
 import re
 import random
+import sys
 
 # Adds a person to the database
 def regPerson(fname, lname, bdate, bplace, address, phone, cursor):
@@ -66,9 +67,21 @@ def handleNotReg(fname, lname, cursor):
 # Returns: newReg - a unique registration number
 def genRegNo(table, cursor):
 	# String for the query, used to make the code more modular
-	query = "SELECT count(*) from " + table
-	cursor.execute(query)
-	return cursor.fetchone()[0]
+	query = "SELECT regno from " + table
+	# Execute the query
+	nums = cursor.execute(query)
+	success = True
+	# Keep generating a number until a unique one is created
+	while True:
+		# Generate a random number
+		newReg = random.randint(1, sys.maxsize)
+		# Check it against existing regNo's
+		for num in nums:
+			if num[0] == newReg:
+				success = False
+		# Return the regNo when a unique one is created
+		if success == True:
+			return newReg
 	
 # Helper function that checks if the person is already in the database or not
 # Inputs: fname - the first name of the person to be added
@@ -149,13 +162,15 @@ def getPaymentAmount():
 	# Loop infinitely
 	while True:
 		# Ask user for an amount
-		amount = input("What is the paymount amount? i.e '9', with no $ sign")
+		amount = input("What is the paymount amount? i.e '9', with no $ sign\n> ")
 
 		# Check if the amount was a digit
-		if not amount.isdigit():
+		if not amount.isdigit() or amount == 0:
 			# Ask agent if they want to try again if the input wasn't a number
 			resume = promptMessage("Invalid input, would you like to try again?")
 
 			# Return None if agent doesn't want to try again
 			if not resume:
 				return None
+		else:
+			return amount

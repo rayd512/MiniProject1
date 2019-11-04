@@ -14,28 +14,36 @@ def regBirth(cursor, city):
 		" first name and mother's last name")
 
 	# Check if the Agent is ready to input 
-	ready = promptMessage("Do you have all this info ready?")
+	ready = promptMessage("- Do you have all this info ready?")
 	# Return to the main menu if the agent is not ready
 	if(ready == False):
 		print("Returning to main menu")
 		return
 
 	# Call get name to get the babies first name with basic error checking
-	fname = getName("What is the baby's first name?\n")
+	fname = getName("- What is the baby's first name?\n")
 	if not fname:
 		print("Returning to main menu")
 		return
 
 	# Get the last name of the baby
-	lname = getName("What is the baby's last name?\n")
+	lname = getName("- What is the baby's last name?\n")
 	if not lname:
 		print("Returning to main menu")
+		return
+
+	# Check if the baby's name is already in the table
+	cursor.execute("SELECT count(*) FROM persons where fname LIKE ? AND lname LIKE ?",
+					(fname, lname))
+	
+	if (cursor.fetchone()[0] > 0):
+		print("- Baby's name already exists, please choose another name")
 		return
 
 	# Get the gender of the baby, will check if something other than
 	# 'm' or 'f' is entered and will ask the user if it wants to try again
 	while True:
-		gender = input("> What is the baby's gender? (m/f)\n").lower()
+		gender = input("- What is the baby's gender? (m/f)\n> ").lower()
 		if (gender == "m" or gender == "f"):
 			break
 		else:
@@ -49,16 +57,16 @@ def regBirth(cursor, city):
 		print("Returning to main menu")
 		return
 
-	bplace = input("> Where was the baby born?\n")
+	bplace = input("- Where was the baby born?\n> ")
 
 	# Get the mother's first name
-	m_fname = getName("What is the mother's first name? \n")	
+	m_fname = getName("- What is the mother's first name? \n")	
 	if not m_fname:
 		print("Returning to main menu")
 		return
 	
 	# Get the mother's last name
-	m_lname = getName("What is the mother's last name? \n")
+	m_lname = getName("- What is the mother's last name? \n")
 	if not m_lname:
 		print("Returning to main menu")
 		return
@@ -69,13 +77,13 @@ def regBirth(cursor, city):
 		handleNotReg(m_fname, m_lname, cursor)
 
 	# Get the father's first name
-	f_fname = getName("What is the father's first name? \n")
+	f_fname = getName("- What is the father's first name? \n")
 	if not f_fname:
 		print("Returning to main menu")
 		return
 
 	# Get the father's last name
-	f_lname = getName("What is the father's last name? \n")
+	f_lname = getName("- What is the father's last name? \n")
 	if not f_lname:
 		print("Returning to main menu")
 		return
@@ -99,7 +107,7 @@ def regBirth(cursor, city):
 		print("Father's name: " + f_fname + " " + f_lname)
 
 	# Checks with user if all the info was correct
-	resume = promptMessage("Is all of this information correct?")
+	resume = promptMessage("- Is all of this information correct?")
 	# Goes back to the main menu if the info is incorrect
 	if (not resume):
 		print("Returning to main menu, please try registering again")
@@ -110,8 +118,8 @@ def regBirth(cursor, city):
 	# Generate a unique regno
 	regno = genRegNo("births", cursor)
 	# Find the mothers address and phone number
-	cursor.execute('''SELECT address, phone FROM persons WHERE fname = ? and
-		lname = ?''', (m_fname, m_lname))
+	cursor.execute('''SELECT address, phone FROM persons WHERE fname LIKE ? and
+		lname LIKE ?''', (m_fname, m_lname))
 	# Fetch the result
 	motherInfo = cursor.fetchone()
 	# Insert the baby into persons

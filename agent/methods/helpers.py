@@ -151,14 +151,25 @@ def getDate():
 				 " 'year-month-day', i.e., 1999-05-12\n> ")
 		# Try and except block to test for proper date format
 		try:
-			datetime.datetime.strptime(date, '%Y-%m-%d')
-			return date
+			bday = datetime.datetime.strptime(date, '%Y-%m-%d').date()
+			today = datetime.date.today()
+			if bday > today:
+				resume = promptMessage("The date cannot be in the future, try again?")
+				if not resume:
+					return None
+				else:
+					continue
+	
 		except ValueError:
 			# Check if the user wants to try again
 			resume = promptMessage("Incorrect date format, try again?")
 			if(resume == False):
 				# Returns none if not wanted to try again
 				return None
+			else:
+				continue
+
+		return date
 
 def getPaymentAmount():
 	# Loop infinitely
